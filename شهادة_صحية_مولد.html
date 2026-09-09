@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>مولد الشهادات الصحية لتصدير المواد الغذائية</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    margin: 0;
+    background: #eef0f3;
+    color: #0b1220;
+  }
+  /* ===== Top bar ===== */
+  .topbar {
+    background: #0e1c30;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 22px;
+    direction: rtl;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .topbar .brand { display: flex; align-items: center; gap: 12px; }
+  .topbar .brand .dot { width: 10px; height: 10px; background: #f5a428; border-radius: 50%; display:inline-block; margin-inline-end:4px;}
+  .topbar .brand h1 { font-size: 17px; margin: 0; }
+  .topbar .brand p { font-size: 11.5px; margin: 2px 0 0 0; color: #9fb0c3; }
+  .topbar .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    border-radius: 6px;
+    padding: 9px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+  }
+  .btn-dark { background: #1c2c42; color: #fff; border-color: #2c3f58; }
+  .btn-dark:hover { background: #24374f; }
+  .btn-outline { background: transparent; color: #f5a428; border-color: #f5a428; }
+  .btn-outline:hover { background: rgba(245,164,40,0.1); }
+  .btn-gold { background: #f5a428; color: #17233a; border-color: #f5a428; }
+  .btn-gold:hover { background: #ffb646; }
+  .btn-mini { padding: 5px 10px; font-size: 11.5px; }
+
+  /* ===== Layout ===== */
+  .layout { display: flex; align-items: flex-start; min-height: calc(100vh - 62px); }
+  .sidebar {
+    width: 360px;
+    min-width: 360px;
+    background: #0e1c30;
+    color: #fff;
+    padding: 18px;
+    direction: rtl;
+    max-height: calc(100vh - 62px);
+    overflow-y: auto;
+  }
+  .card {
+    background: #16263c;
+    border: 1px solid #223350;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .card h3 {
+    color: #f5a428;
+    font-size: 12.5px;
+    letter-spacing: 0.5px;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .field { margin-bottom: 10px; }
+  .field label { display: block; font-size: 11px; color: #b9c6d6; margin-bottom: 4px; }
+  .field input[type=text], .field input[type=date], .field textarea, .field select {
+    width: 100%;
+    background: #0f1c2e;
+    border: 1px solid #2a3c56;
+    border-radius: 6px;
+    padding: 8px 9px;
+    color: #fff;
+    font-size: 12.5px;
+    font-family: inherit;
+  }
+  .field textarea { resize: vertical; min-height: 44px; }
+  .field input::placeholder, .field textarea::placeholder { color: #5c6f88; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .choice-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .choice-group label {
+    flex: 1;
+    text-align: center;
+    background: #0f1c2e;
+    border: 1px solid #2a3c56;
+    border-radius: 6px;
+    padding: 7px 4px;
+    font-size: 11.5px;
+    cursor: pointer;
+    color: #cfd9e6;
+  }
+  .choice-group input { display: none; }
+  .choice-group input:checked + span { color: #17233a; }
+  .choice-group label:has(input:checked) { background: #f5a428; border-color: #f5a428; color: #17233a; font-weight: 700; }
+
+  .product-row {
+    background: #0f1c2e;
+    border: 1px solid #2a3c56;
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .product-row .rowhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .product-row .rowhead span { font-size: 11px; color: #f5a428; font-weight: 700; }
+  .product-row .del { background: #7a1f1f; border: none; color: #fff; border-radius: 4px; width: 20px; height: 20px; cursor: pointer; font-size: 12px; line-height: 1; }
+  .product-row .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .product-row input {
+    width: 100%; background: #16263c; border: 1px solid #2a3c56; border-radius: 5px;
+    padding: 5px 6px; color: #fff; font-size: 11px; font-family: inherit; margin-bottom: 5px;
+  }
+  .product-row input::placeholder { color: #5c6f88; }
+
+  /* ===== Preview side ===== */
+  .preview-area { flex: 1; padding: 18px 22px; }
+  .preview-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #0e1c30; color: #fff; border-radius: 8px; padding: 10px 16px; margin-bottom: 16px;
+    direction: rtl;
+  }
+  .preview-bar .title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; }
+  .preview-bar .actions { display: flex; gap: 8px; }
+
+  .paper-wrap { display: flex; justify-content: center; }
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    background: #fff;
+    padding: 7mm 8mm;
+    box-shadow: 0 2px 14px rgba(0,0,0,0.25);
+    font-size: 9px;
+    color: #000;
+  }
+
+  .meta-bar {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 0.8fr 1.1fr;
+    font-size: 8.3px;
+    border-bottom: 1px solid #000;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+  .meta-bar .cell { padding: 0 4px; }
+  .meta-bar a { color: #000; }
+
+  .title-block { text-align: center; margin: 4px 0 8px 0; }
+  .title-block .ar-title { font-size: 21px; font-weight: bold; }
+  .title-block .en-title { font-size: 13px; font-weight: bold; margin-top: 2px; }
+
+  table.cert { width: 100%; border-collapse: collapse; table-layout: fixed; direction: ltr; }
+  table.cert td { border: 1px solid #000; padding: 2px 3px; vertical-align: top; font-size: 8.3px; line-height: 1.25; }
+  .num { text-align: center; font-weight: bold; vertical-align: middle; }
+  .ar { direction: rtl; text-align: right; unicode-bidi: isolate; }
+  .en { direction: ltr; text-align: left; unicode-bidi: isolate; }
+  .bold { font-weight: bold; }
+  .center { text-align: center; }
+  .small { font-size: 7.6px; }
+  .val { min-height: 11px; border-bottom: 1px dotted #999; display: block; padding: 1px 2px; color: #000; }
+  .val:empty::before { content: "\00a0"; }
+  .box { width: 14px; height: 14px; border: 1px solid #000; display: inline-block; text-align: center; line-height: 12px; font-weight: bold; }
+  .box.on::before { content: "✓"; }
+
+  table.products { width: 100%; border-collapse: collapse; table-layout: fixed; direction: ltr; }
+  table.products th, table.products td { border: 1px solid #000; padding: 2px; font-size: 7.8px; text-align: center; vertical-align: middle; }
+  table.products th { font-weight: bold; line-height: 1.15; }
+  table.products .bar-title { text-align: center; font-weight: bold; direction: rtl; }
+
+  table.bottom { width: 100%; border-collapse: collapse; table-layout: fixed; border-top: none; direction: ltr; }
+  table.bottom td { border: 1px solid #000; border-top: none; padding: 3px; font-size: 8px; vertical-align: top; }
+
+  .attest-table { width: 100%; border-collapse: collapse; table-layout: fixed; direction: ltr; }
+  .attest-table td { border: 1px solid #000; border-top: none; padding: 5px; font-size: 8px; line-height: 1.5; vertical-align: top; }
+  .attest-table .hdr { font-weight: bold; text-align: center; border-bottom: 1px solid #000; }
+  .attest-table ul { margin: 3px 0 0 0; padding-inline-start: 14px; }
+
+  .validity { border: 1px solid #000; border-top: none; text-align: center; font-weight: bold; padding: 4px; font-size: 8.3px; }
+
+  table.sign { width: 100%; border-collapse: collapse; table-layout: fixed; border-top: none; direction: ltr; }
+  table.sign td { border: 1px solid #000; border-top: none; padding: 6px; font-size: 8.6px; vertical-align: top; }
+  .stamp-box {
+    border: 1px dashed #aaa; height: 65px; width: 85px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 7px; float: left; margin-left: 8px;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .topbar, .sidebar, .preview-bar, .no-print { display: none !important; }
+    .layout { display: block; }
+    .preview-area { padding: 0; }
+    .page { box-shadow: none; margin: 0 auto; width: auto; min-height: auto; padding: 5mm 7mm; }
+    @page { size: A4 portrait; margin: 5mm; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <div>
+      <h1>مولد الشهادات الصحية لتصدير المواد الغذائية</h1>
+      <p>Health Certificate Generator — شهادة صحية لتصدير مواد غذائية</p>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn btn-dark" onclick="clearAll()">🗑️ مسح الكل</button>
+    <button class="btn btn-dark" onclick="loadSample()">🧪 تحميل مثال</button>
+    <button class="btn btn-outline" onclick="window.print()">🖨️ طباعة</button>
+    <button class="btn btn-gold" onclick="window.print()">⬇️ تنزيل PDF</button>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- ================= SIDEBAR FORM ================= -->
+  <div class="sidebar" id="sidebar">
+
+    <div class="card">
+      <h3>بيانات الشهادة</h3>
+      <div class="row2">
+        <div class="field"><label>الرقم المرجعي للشهادة</label><input type="text" data-bind="ref_no" placeholder="مثال: 106"></div>
+        <div class="field"><label>تاريخ الإصدار</label><input type="date" data-bind="issue_date"></div>
+      </div>
+      <div class="field">
+        <label>نوع الشهادة</label>
+        <div class="choice-group" data-group="cert_type">
+          <label><input type="radio" name="cert_type" value="new" checked><span>جديد / New</span></label>
+          <label><input type="radio" name="cert_type" value="mod"><span>معدل / Modification</span></label>
+        </div>
+      </div>
+      <div class="field"><label>الرقم التعريفي/هوية وسيلة النقل</label><input type="text" data-bind="conveyance_id"></div>
+      <div class="field">
+        <label>وسيلة النقل</label>
+        <div class="choice-group" data-group="transport">
+          <label><input type="radio" name="transport" value="road" checked><span>برى</span></label>
+          <label><input type="radio" name="transport" value="sea"><span>بحري</span></label>
+          <label><input type="radio" name="transport" value="air"><span>جوى</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>درجة حرارة حفظ المادة الغذائية</label>
+        <div class="choice-group" data-group="temp">
+          <label><input type="radio" name="temp" value="chilled"><span>مبرد</span></label>
+          <label><input type="radio" name="temp" value="frozen"><span>مجمد</span></label>
+          <label><input type="radio" name="temp" value="ambient" checked><span>درجة حرارة الغرفة</span></label>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>بلد الوصول/منفذ الدخول</label><input type="text" data-bind="dest_country"></div>
+        <div class="field"><label>ميناء المغادرة/موقع التحميل</label><input type="text" data-bind="loading_port"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>رقم شهادة المطابقة COC (إن وجد)</label><input type="text" data-bind="coc_no"></div>
+        <div class="field"><label>رقم إصدار النموذج (أعلى الصفحة)</label><input type="text" data-bind="issue_no_hdr" placeholder="106"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>المرسل (المصدر) — Consignor</h3>
+      <div class="field"><label>الاسم بالعربي</label><input type="text" data-bind="exp_name_ar"></div>
+      <div class="field"><label>العنوان بالعربي</label><textarea data-bind="exp_addr_ar"></textarea></div>
+      <div class="field"><label>Name (English)</label><input type="text" data-bind="exp_name_en"></div>
+      <div class="field"><label>Address (English)</label><textarea data-bind="exp_addr_en"></textarea></div>
+    </div>
+
+    <div class="card">
+      <h3>المرسل إليه — Consignee</h3>
+      <div class="field"><label>الاسم بالعربي</label><input type="text" data-bind="imp_name_ar"></div>
+      <div class="field"><label>العنوان بالعربي</label><textarea data-bind="imp_addr_ar"></textarea></div>
+      <div class="field"><label>Name (English)</label><input type="text" data-bind="imp_name_en"></div>
+      <div class="field"><label>Address (English)</label><textarea data-bind="imp_addr_en"></textarea></div>
+    </div>
+
+    <div class="card">
+      <h3>الشركة الصانعة — Producer</h3>
+      <div class="field"><label>الاسم بالعربي</label><input type="text" data-bind="prod_name_ar"></div>
+      <div class="field"><label>العنوان بالعربي</label><textarea data-bind="prod_addr_ar"></textarea></div>
+      <div class="field"><label>Name (English)</label><input type="text" data-bind="prod_name_en"></div>
+      <div class="field"><label>Address (English)</label><textarea data-bind="prod_addr_en"></textarea></div>
+    </div>
+
+    <div class="card">
+      <h3>التوقيع <span style="color:#9fb0c3; font-weight:400;">Signature</span></h3>
+      <div class="field"><label>تاريخ التوقيع</label><input type="text" data-bind="sign_date" placeholder="مثال: 09/09/2026"></div>
+    </div>
+
+    <div class="card">
+      <h3>الأصناف — Products <button class="btn btn-gold btn-mini" onclick="addProduct()">+ إضافة صنف</button></h3>
+      <div id="productsForm"></div>
+    </div>
+
+  </div>
+
+  <!-- ================= PREVIEW ================= -->
+  <div class="preview-area">
+    <div class="preview-bar">
+      <div class="title">📄 معاينة الشهادة — Certificate Preview</div>
+      <div class="actions">
+        <button class="btn btn-outline btn-mini" onclick="window.print()">🖨️ طباعة / PDF</button>
+        <button class="btn btn-gold btn-mini" onclick="window.print()">⬇️ تنزيل</button>
+      </div>
+    </div>
+
+    <div class="paper-wrap">
+      <div class="page" id="page">
+
+        <div class="meta-bar">
+          <div class="cell en" style="text-align:right;">تاريخ الإصدار:- <span id="p_issueDateHdr">2025/10/26</span></div>
+          <div class="cell en">إصدار رقم:<span id="p_issueNoHdr">106</span></div>
+          <div class="cell en">1 Page 1 of</div>
+          <div class="cell en" style="text-align:left;">
+            نموذج رقم: EXP-PR-FM-04-01-A<br>
+            Website: <a href="#">www.nfsa.gov.eg</a><br>
+            Email: <a href="#">info@nfsa.gov.eg</a>
+          </div>
+        </div>
+
+        <div class="title-block">
+          <div class="ar-title">شهادة صحية لتصدير مواد غذائية</div>
+          <div class="en-title">Health Certificate for Export</div>
+        </div>
+
+        <table class="cert">
+          <colgroup>
+            <col style="width:3.2%"><col style="width:12%"><col style="width:20%">
+            <col style="width:3.2%"><col style="width:14%"><col style="width:47.6%">
+          </colgroup>
+
+          <tr>
+            <td class="num" rowspan="2">1.1</td>
+            <td class="en" rowspan="2">
+              <div class="bold">Consignor (Exporter)</div>
+              <div>Name: <span class="val" id="p_exp_name_en"></span></div>
+              <div>Address: <span class="val" id="p_exp_addr_en"></span></div>
+            </td>
+            <td class="ar" rowspan="2">
+              <div class="bold">المرسل (المصدر)</div>
+              <div>الاسم: <span class="val" id="p_exp_name_ar"></span></div>
+              <div>العنوان: <span class="val" id="p_exp_addr_ar"></span></div>
+            </td>
+            <td class="num" rowspan="2">1.2</td>
+            <td class="center">
+              <div class="ar bold" style="text-align:center">نوع الشهادة</div>
+              <div class="en bold" style="text-align:center">Certificate Type</div>
+              <table style="width:100%; border-collapse:collapse; margin-top:2px;">
+                <tr>
+                  <td style="border:1px solid #000; text-align:center; padding:1px;">
+                    <div class="ar small">معدل</div><div class="en small">Modification</div>
+                    <span class="box" id="p_type_mod"></span>
+                  </td>
+                  <td style="border:1px solid #000; text-align:center; padding:1px;">
+                    <div class="ar small">جديد</div><div class="en small">New</div>
+                    <span class="box" id="p_type_new"></span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+            <td rowspan="2">
+              <div class="ar bold">الرقم المرجعي للشهادة:</div>
+              <div class="en bold">Certificate Reference No.</div>
+              <span class="val" id="p_ref_no" style="margin-top:6px;"></span>
+            </td>
+          </tr>
+          <tr></tr>
+
+          <tr>
+            <td class="num">1.3</td>
+            <td class="en">
+              <div class="bold">Consignee (importer)</div>
+              <div>Name: <span class="val" id="p_imp_name_en"></span></div>
+              <div>Address: <span class="val" id="p_imp_addr_en"></span></div>
+            </td>
+            <td class="ar">
+              <div class="bold">المرسل إليه:</div>
+              <div>الاسم: <span class="val" id="p_imp_name_ar"></span></div>
+              <div>العنوان: <span class="val" id="p_imp_addr_ar"></span></div>
+            </td>
+            <td class="num">1.4</td>
+            <td class="center">
+              <span class="val" id="p_issue_date" style="margin-top:14px;"></span>
+            </td>
+            <td>
+              <div class="ar bold center">تاريخ الإصدار:</div>
+              <div class="en bold center">Date of Issue</div>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="num" rowspan="2">1.5</td>
+            <td class="en" rowspan="2">
+              <div class="bold">Producer/Manufacturer:</div>
+              <div>Name: <span class="val" id="p_prod_name_en"></span></div>
+              <div>Address: <span class="val" id="p_prod_addr_en"></span></div>
+            </td>
+            <td class="ar" rowspan="2">
+              <div class="bold">الشركة الصانعة:</div>
+              <div>الاسم: <span class="val" id="p_prod_name_ar"></span></div>
+              <div>العنوان: <span class="val" id="p_prod_addr_ar"></span></div>
+            </td>
+            <td class="num">1.6</td>
+            <td class="center">
+              <div class="en bold">Address:</div>
+              <div class="ar bold">العنوان:</div>
+              <div class="en" style="margin-top:2px;">13 Salah Salem Street-Cairo-Egypt</div>
+              <div class="ar">13 شارع صلاح سالم-القاهرة-مصر</div>
+            </td>
+            <td class="ar bold center">
+              الجهة الرقابية المختصة<br>
+              الهيئة القومية لسلامة الغذاء – جمهورية مصر العربية
+              <div class="en" style="margin-top:2px; text-align:center;">
+                Competent Certifying Authority: NFSA<br>Arab Republic of Egypt
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="num">1.7</td>
+            <td colspan="2">
+              <div class="ar bold center">الرقم التعريفي/هوية وسيلة النقل:</div>
+              <div class="en bold center">Conveyance Identification No.:</div>
+              <span class="val center" id="p_conveyance_id" style="margin-top:2px;"></span>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="num">1.8</td>
+            <td colspan="2">
+              <table style="width:100%; border-collapse:collapse;">
+                <tr>
+                  <td style="border:1px solid #000; width:33%; text-align:center; padding:1px;"><div class="ar small bold">برى</div><div class="en small bold">By Road</div></td>
+                  <td style="border:1px solid #000; width:33%; text-align:center; padding:1px;"><div class="ar small bold">بحري</div><div class="en small bold">By Sea</div></td>
+                  <td style="border:1px solid #000; width:34%; text-align:center; padding:1px;"><div class="ar small bold">جوى</div><div class="en small bold">By Air</div></td>
+                </tr>
+                <tr>
+                  <td style="border:1px solid #000; text-align:center;"><span class="box" id="p_t_road"></span></td>
+                  <td style="border:1px solid #000; text-align:center;"><span class="box" id="p_t_sea"></span></td>
+                  <td style="border:1px solid #000; text-align:center;"><span class="box" id="p_t_air"></span></td>
+                </tr>
+              </table>
+            </td>
+            <td class="center">
+              <div class="ar bold">وسيلة النقل:</div>
+              <div class="en bold">Means of transport/conveyance:</div>
+            </td>
+            <td class="num">1.9</td>
+            <td colspan="2">
+              <table style="width:100%; border-collapse:collapse;">
+                <tr>
+                  <td style="border:1px solid #000; width:25%; text-align:center; padding:1px;"><div class="ar small bold">مبرد</div><div class="en small bold">Chilled</div></td>
+                  <td style="border:1px solid #000; width:25%; text-align:center; padding:1px;"><div class="ar small bold">مجمد</div><div class="en small bold">Frozen</div></td>
+                  <td style="border:1px solid #000; width:25%; text-align:center; padding:1px;"><div class="ar small bold">درجة حرارة الغرفة</div><div class="en small bold">Ambient</div></td>
+                  <td style="border:1px solid #000; width:25%;" rowspan="2" class="ar bold center">
+                    درجة حرارة حفظ المادة الغذائية
+                    <div class="en" style="margin-top:2px;">Temperature of Food Product</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="border:1px solid #000; text-align:center;"><span class="box" id="p_temp_chilled"></span></td>
+                  <td style="border:1px solid #000; text-align:center;"><span class="box" id="p_temp_frozen"></span></td>
+                  <td style="border:1px solid #000; text-align:center;"><span class="box" id="p_temp_ambient"></span></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="num">1.10</td>
+            <td colspan="2"><span class="val" id="p_dest_country" style="margin-top:18px;"></span></td>
+            <td class="ar bold center" style="vertical-align:middle;">
+              بلد الوصول/منفذ الدخول:
+              <div class="en" style="margin-top:2px;">Country of Destination/Border of Entry:</div>
+            </td>
+            <td class="num">1.11</td>
+            <td colspan="2"><span class="val" id="p_loading_port" style="margin-top:18px;"></span></td>
+          </tr>
+        </table>
+
+        <table class="products" id="productsTable">
+          <colgroup>
+            <col style="width:2.5%"><col style="width:15.5%"><col style="width:9%"><col style="width:8%">
+            <col style="width:10%"><col style="width:8%"><col style="width:8%"><col style="width:8%">
+            <col style="width:9%"><col style="width:8%"><col style="width:14%">
+          </colgroup>
+          <thead>
+            <tr><th colspan="11" class="bar-title">Human Consumption Directly &nbsp; :الاستهلاك الآدمى مباشرة</th></tr>
+            <tr>
+              <th rowspan="2">1.<br>12</th>
+              <th>Name &amp; Description of Food</th>
+              <th>HS-Code</th>
+              <th>Treatment Type</th>
+              <th>Brand Name</th>
+              <th>Production Date</th>
+              <th>Expiry Date</th>
+              <th>No. of Packages</th>
+              <th>Batch/Lot No.</th>
+              <th>Total Weight</th>
+              <th>Unit of weight<br>(g / kg/ TON)</th>
+            </tr>
+            <tr class="ar">
+              <th style="display:none;"></th>
+              <th>اسم ووصف المادة الغذائية</th>
+              <th>بند التعريفة الجمركية</th>
+              <th>نوع المعالجة</th>
+              <th>العلامة التجارية</th>
+              <th>تاريخ الإنتاج</th>
+              <th>تاريخ الانتهاء</th>
+              <th>عدد الطرود</th>
+              <th>رقم الشغيلة/ الدفعة</th>
+              <th>الوزن الكلي</th>
+              <th>وحدة الوزن<br>(جم / كجم/ طن)</th>
+            </tr>
+          </thead>
+          <tbody id="productsBody"></tbody>
+        </table>
+
+        <table class="bottom">
+          <colgroup><col style="width:16%"><col style="width:26%"><col style="width:58%"></colgroup>
+          <tr>
+            <td class="ar small">غير موجود</td>
+            <td>
+              <div class="en small bold">Certificate of Conformity (COC) No. (if any):</div>
+              <div class="ar small bold">رقم شهادة مطابقة المنتج (إن وجد)</div>
+              <span class="val" id="p_coc_no"></span>
+            </td>
+            <td class="center" style="vertical-align:middle;">
+              <div class="ar bold">جميع البيانات الخاصة بالشحنة مسئولية الشركة الصانعة</div>
+              <div class="en bold">All shipment data are the responsibility of the manufacturer.</div>
+            </td>
+          </tr>
+        </table>
+
+        <table class="attest-table">
+          <colgroup><col style="width:50%"><col style="width:50%"></colgroup>
+          <tr>
+            <td class="hdr en">Health Attestations</td>
+            <td class="hdr ar">الإفادات الصحية</td>
+          </tr>
+          <tr>
+            <td class="en">
+              <ul>
+                <li>The products are sold in the exporting country.</li>
+                <li>The above products are produced at food establishments developing and maintaining HACCP or an equivalent system.</li>
+                <li>The establishment is regularly inspected and supervised by the competent authority.</li>
+                <li>The above products have a Certificate of Free Sale in the country of shipment.</li>
+                <li>The above mentioned products meet hygiene requirements.</li>
+                <li>The above products are authorized to be used in the manufacture of foodstuff.</li>
+              </ul>
+            </td>
+            <td class="ar">
+              <ul>
+                <li>تباع المنتجات في بلد المصدر.</li>
+                <li>يتم إنتاج المنتجات المذكورة أعلاه في منشآت غذائية تقوم بوضع نظام تحليل المخاطر ونقاط التحكم الحرجة (نظام الهاسب) أو نظام مكافئ له، وتلتزم بتطبيقه.</li>
+                <li>وتخضع المنشأة لإشراف السلطة المختصة التي تقوم بعمليات تفتيش عليها على نحوٍ منتظم.</li>
+                <li>المنتجات المذكورة أعلاه هي مبيعات للبيع الحر (أو حاصلة على شهادة البيع الحر) في بلد الشحن.</li>
+                <li>تستوفي المنتجات المذكورة أعلاه الاشتراطات اللازمة للنظافة والصحة.</li>
+                <li>المنتجات المذكورة آنفًا مصرح باستخدامها في مجال صناعة المواد الغذائية.</li>
+              </ul>
+            </td>
+          </tr>
+        </table>
+
+        <div class="validity">
+          تستخدم هذه الشهادة لمدة شهرين من تاريخ إصدارها وتستخدم لرسالة واحدة فقط داخل بلد المنشأ<br>
+          This certificate is valid for two months from the date of issue, and is used for only one consignment.
+        </div>
+
+        <table class="sign">
+          <colgroup><col style="width:50%"><col style="width:50%"></colgroup>
+          <tr>
+            <td class="en">
+              <div>Dr. Ashraf Sami</div>
+              <div>General Manager for Food Export</div>
+              <div>Official Stamp</div>
+              <div style="margin-top:4px;">Date: <span class="val" id="p_sign_date_en" style="display:inline-block; width:100px;"></span></div>
+            </td>
+            <td class="ar">
+              <div class="stamp-box">الختم</div>
+              <div>د/ أشرف سامي</div>
+              <div>مدير عام الرقابة على الصادرات الغذائية</div>
+              <div>الختم الرسمي:</div>
+              <div style="margin-top:4px;">التاريخ: <span class="val" id="p_sign_date_ar" style="display:inline-block; width:100px;"></span></div>
+            </td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let products = [];
+let pid = 0;
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  const [y,m,d] = iso.split('-');
+  if (!y) return iso;
+  return `${d}/${m}/${y}`;
+}
+
+function addProduct(data) {
+  data = data || {};
+  pid++;
+  products.push(Object.assign({ id: pid, name:'', hs:'', treat:'', brand:'', prod:'', exp:'', pkgs:'', batch:'', weight:'', unit:'Kg' }, data));
+  renderProductsForm();
+  sync();
+}
+function removeProduct(id) {
+  products = products.filter(p => p.id !== id);
+  renderProductsForm();
+  sync();
+}
+function renderProductsForm() {
+  const el = document.getElementById('productsForm');
+  el.innerHTML = products.map((p, i) => `
+    <div class="product-row">
+      <div class="rowhead"><span>صنف ${i+1}</span><button class="del" onclick="removeProduct(${p.id})">×</button></div>
+      <input placeholder="اسم ووصف المادة" value="${p.name}" oninput="updateProduct(${p.id},'name',this.value)">
+      <div class="grid3">
+        <input placeholder="بند جمركي" value="${p.hs}" oninput="updateProduct(${p.id},'hs',this.value)">
+        <input placeholder="نوع المعالجة" value="${p.treat}" oninput="updateProduct(${p.id},'treat',this.value)">
+        <input placeholder="العلامة التجارية" value="${p.brand}" oninput="updateProduct(${p.id},'brand',this.value)">
+      </div>
+      <div class="grid3">
+        <input placeholder="تاريخ الإنتاج" value="${p.prod}" oninput="updateProduct(${p.id},'prod',this.value)">
+        <input placeholder="تاريخ الانتهاء" value="${p.exp}" oninput="updateProduct(${p.id},'exp',this.value)">
+        <input placeholder="عدد الطرود" value="${p.pkgs}" oninput="updateProduct(${p.id},'pkgs',this.value)">
+      </div>
+      <div class="grid3">
+        <input placeholder="رقم الدفعة" value="${p.batch}" oninput="updateProduct(${p.id},'batch',this.value)">
+        <input placeholder="الوزن الكلي" value="${p.weight}" oninput="updateProduct(${p.id},'weight',this.value)">
+        <input placeholder="الوحدة" value="${p.unit}" oninput="updateProduct(${p.id},'unit',this.value)">
+      </div>
+    </div>
+  `).join('');
+}
+function updateProduct(id, key, val) {
+  const p = products.find(p => p.id === id);
+  if (p) p[key] = val;
+  sync();
+}
+function renderProductsPreview() {
+  const body = document.getElementById('productsBody');
+  const rows = products.map((p, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td class="ar" style="text-align:center;">${p.name||''}</td>
+      <td>${p.hs||''}</td>
+      <td class="ar" style="text-align:center;">${p.treat||''}</td>
+      <td class="ar" style="text-align:center;">${p.brand||''}</td>
+      <td>${p.prod||''}</td>
+      <td>${p.exp||''}</td>
+      <td>${p.pkgs||''}</td>
+      <td>${p.batch||''}</td>
+      <td>${p.weight||''}</td>
+      <td>${p.unit||''}</td>
+    </tr>
+  `).join('');
+  // pad to at least 8 rows for visual consistency
+  let extra = '';
+  for (let i = products.length; i < 8; i++) {
+    extra += `<tr><td>${i+1}</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
+  }
+  body.innerHTML = rows + extra;
+}
+
+function getVal(name) {
+  const el = document.querySelector(`[data-bind="${name}"]`);
+  return el ? el.value : '';
+}
+function getRadio(group) {
+  const el = document.querySelector(`input[name="${group}"]:checked`);
+  return el ? el.value : '';
+}
+function setBox(id, on) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('on', !!on);
+}
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val || '';
+}
+
+function sync() {
+  setText('p_ref_no', getVal('ref_no'));
+  setText('p_issue_date', fmtDate(getVal('issue_date')));
+  setText('p_issueDateHdr', fmtDate(getVal('issue_date')) || '2025/10/26');
+  setText('p_issueNoHdr', getVal('issue_no_hdr') || getVal('ref_no'));
+  setText('p_conveyance_id', getVal('conveyance_id'));
+  setText('p_dest_country', getVal('dest_country'));
+  setText('p_loading_port', getVal('loading_port'));
+  setText('p_coc_no', getVal('coc_no'));
+  setText('p_sign_date_en', getVal('sign_date'));
+  setText('p_sign_date_ar', getVal('sign_date'));
+
+  setText('p_exp_name_ar', getVal('exp_name_ar'));
+  setText('p_exp_addr_ar', getVal('exp_addr_ar'));
+  setText('p_exp_name_en', getVal('exp_name_en'));
+  setText('p_exp_addr_en', getVal('exp_addr_en'));
+
+  setText('p_imp_name_ar', getVal('imp_name_ar'));
+  setText('p_imp_addr_ar', getVal('imp_addr_ar'));
+  setText('p_imp_name_en', getVal('imp_name_en'));
+  setText('p_imp_addr_en', getVal('imp_addr_en'));
+
+  setText('p_prod_name_ar', getVal('prod_name_ar'));
+  setText('p_prod_addr_ar', getVal('prod_addr_ar'));
+  setText('p_prod_name_en', getVal('prod_name_en'));
+  setText('p_prod_addr_en', getVal('prod_addr_en'));
+
+  const ct = getRadio('cert_type');
+  setBox('p_type_new', ct === 'new');
+  setBox('p_type_mod', ct === 'mod');
+
+  const tr = getRadio('transport');
+  setBox('p_t_road', tr === 'road');
+  setBox('p_t_sea', tr === 'sea');
+  setBox('p_t_air', tr === 'air');
+
+  const tp = getRadio('temp');
+  setBox('p_temp_chilled', tp === 'chilled');
+  setBox('p_temp_frozen', tp === 'frozen');
+  setBox('p_temp_ambient', tp === 'ambient');
+
+  renderProductsPreview();
+}
+
+document.getElementById('sidebar').addEventListener('input', sync);
+document.getElementById('sidebar').addEventListener('change', sync);
+
+function clearAll() {
+  if (!confirm('هل تريد مسح كل البيانات المدخلة؟')) return;
+  document.querySelectorAll('#sidebar input[type=text], #sidebar input[type=date], #sidebar textarea').forEach(el => el.value = '');
+  document.querySelector('input[name=cert_type][value=new]').checked = true;
+  document.querySelector('input[name=transport][value=road]').checked = true;
+  document.querySelector('input[name=temp][value=ambient]').checked = true;
+  products = [];
+  for (let i=0;i<8;i++) addProduct();
+  sync();
+}
+
+function loadSample() {
+  document.querySelector('[data-bind=ref_no]').value = '98';
+  document.querySelector('[data-bind=issue_no_hdr]').value = '98';
+  document.querySelector('[data-bind=exp_name_ar]').value = 'شركة راندة للتوريد والتصدير';
+  document.querySelector('[data-bind=exp_addr_ar]').value = 'مصر - القاهرة - جسر السويس - النرهم الجديدة';
+  document.querySelector('[data-bind=imp_name_ar]').value = 'مؤسسة الذرة النقية للتجارة';
+  document.querySelector('[data-bind=imp_addr_ar]').value = 'السعودية';
+  document.querySelector('[data-bind=prod_name_en]').value = 'Egyptian Gulf international for industries and light foods';
+  document.querySelector('[data-bind=prod_addr_en]').value = 'cairo – Alexandria agricultural road km90, tanta';
+  document.querySelector('[data-bind=prod_name_ar]').value = 'المصرية الخليجية الدولية للصناعات والاغذية الخفيفة';
+  document.querySelector('[data-bind=prod_addr_ar]').value = 'طنطا طريق القاهره اسكندرية الزراعي الكيلو 90';
+  document.querySelector('[data-bind=dest_country]').value = 'جدة';
+  document.querySelector('[data-bind=loading_port]').value = 'سفاجا';
+  document.querySelector('input[name=transport][value=road]').checked = true;
+  document.querySelector('input[name=temp][value=ambient]').checked = true;
+
+  products = [];
+  addProduct({name:'مصاصه', hs:'1704900090', brand:'مصاصه', prod:'7/2026', exp:'7/2028', pkgs:'2200', batch:'S7', weight:'24200', unit:'Kg'});
+  addProduct({name:'بونبوني', hs:'1704900090', brand:'بونبوني', prod:'7/2026', exp:'7/2028', pkgs:'350', batch:'S7', weight:'1400', unit:'Kg'});
+  addProduct({name:'لبان', hs:'1704900090', brand:'لبان', prod:'7/2026', exp:'7/2028', pkgs:'150', batch:'S7', weight:'1050', unit:'Kg'});
+  for (let i=0;i<5;i++) addProduct();
+  sync();
+}
+
+for (let i=0;i<8;i++) addProduct();
+sync();
+</script>
+
+</body>
+</html>
